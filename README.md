@@ -24,8 +24,8 @@ observe seqeuences : o1,o2,o3...
     Caculate P(o1o2....)
 
 **Can be calculated from 2 kinds of recursion**  
-    Forward_k[i] = P(o1o2...ok, qk=si)  
-    Backward_k[i] = P(o(k+1)o(k+2)...oL|qk=si)
+    *Forward_k[i] = P(o1o2...ok, qk=si)*    
+    *Backward_k[i] = P(o(k+1)o(k+2)...oL|qk=si)*  
 
 ## 2. Decoding problem   
 
