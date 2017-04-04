@@ -1,5 +1,24 @@
 import tensorflow as tf
 import numpy as np
+from tensorflow.examples.tutorials.mnist import input_data
+
+def to_binary_1D(x):
+    '''
+        input : 1D array
+        return :
+    '''
+    temp = np.zeros(len(x))
+    for i in range(len(x)):
+        if x[i]>0.5:
+            temp[i] = 1
+    return temp 
+
+def to_binary_2D(x):
+    temp = []
+    for i in range(len(x)):
+        temp.append(to_binary_1D(x[i]))
+    temp = np.array(temp)
+    return temp
 
 def linear(x, weights, biases, activation = 'sigmoid'):
     '''
@@ -23,7 +42,7 @@ def sample(prob):
         input :
             prob 2D tensor
         return:
-
+            sample 1 accroding to the probability 
     '''
     return (tf.sign(prob - tf.random_uniform(prob.get_shape(),minval = 0, maxval=1, dtype = tf.float32)) + 1)/2
 
