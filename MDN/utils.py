@@ -15,21 +15,46 @@ def function(x, error_bound =0.1):
     target += random_sample(length, -error_bound, error_bound)
     return target
 
-def plotter(x, y, option = 'b'):
-    plt.plot(x, y , option)
+
+def random_choice(states, p):
+    '''
+    input : 
+        states = int
+        p = positive 1D array length(=states)
+    return :
+        select between 0 ~ (states-1) according to probability distribution p
+    
+    '''
+    if states != len(p):
+        raise WrongstatesError
+    r = np.random.rand()*np.sum(p)
+    for i in range(states):
+        r-=p[i]
+        if r<=0:
+            return i
+
+def MDN_error(x, pi, mu, sigma, epsilon):
+    temp1 = -tf.square((x - mu)/(sigma + epsilon))
+    temp2 = tf.log(tf.reduce_sum(pi*tf.exp(temp1)/(sigma + epsilon)/math.sqrt(2*math.pi), [1]))
+    return -tf.reduce_mean(temp2,[0])
+
+def plotter(x, y, option = 'b', alpha = 0.3):
+    plt.plot(x, y , option, alpha = alpha)
     plt.show()
 
-def fully_connected(input, in_layer, out_layer):
-    W = tf.Variable(tf.truncated_normal([in_layer, out_layer], dtype = tf.float32)*1,name = 'fc_weight')
-    b = tf.Variable(tf.random_uniform(shape=[out_layer], dtype = tf.float32)*0.01, name = 'fc_bias')
+def fully_connected(input, in_layer, out_layer, stddev):
+    W = tf.Variable(tf.truncated_normal([in_layer, out_layer], stddev = stddev, dtype = tf.float32),name = 'fc_weight')
+    b = tf.Variable(tf.truncated_normal(shape=[out_layer], stddev = stddev, dtype = tf.float32), name = 'fc_bias')
     return tf.matmul(input, W)+b
 
-def Neural_network(x, hidden1_layers, hidden2_layers):
+def Neural_network(x, hidden_layers, output_size = 1, stddev = 1.0):
     temp_x = tf.reshape(x, [-1, 1])
-    h1 = tf.tanh(fully_connected(temp_x, 1, hidden1_layers))
-    h2 = tf.tanh(fully_connected(h1, hidden1_layers, hidden2_layers))
-    y_hat = fully_connected(h2, hidden2_layers, 1)
-    return tf.reshape(y_hat, [-1])
+    h1 = tf.tanh(fully_connected(temp_x, 1, hidden_layers, stddev))
+    y_hat = fully_connected(h1, hidden_layers, output_size, stddev)
+    if output_size == 1:
+        return tf.reshape(y_hat, [-1])
+    else:
+        return y_hat
 
 def stack_1D_to_2D(x, num):
     temp = tf.tile(x,[num])
