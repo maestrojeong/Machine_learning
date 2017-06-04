@@ -1,3 +1,4 @@
-.ipynb*
 __pycache__
+.ipynb*
 *.swp
+MNIST_data
